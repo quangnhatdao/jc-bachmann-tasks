@@ -8,36 +8,35 @@ import requests
 
 app = Flask(__name__)
 
+"""
+handler for index route
+"""
 @app.route("/")
 def index_handler():
+    return render_template('index.html')
 
-    response = requests.get('http://127.0.0.1:5000/data')
-    aList = []
-    bList = []
-
-    for el in response.json():
-        aList.append(el['a'])
-        bList.append(el['b'])
-
-    df = pd.DataFrame({
-      'a': aList,
-      'b': bList
-    })
-    fig = px.line(df, x='a', y='b', title='Pls hire me!', category_orders={"a": [*range(0, 100, 1)], "b": [*range(0, 9, 1)]},)
-    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-    return render_template('index.html', graphJSON=graphJSON)
-    
+"""
+handler for data route
+"""
 @app.route("/data")
 def data_handler():
+    # convert data frame to json
     return get_df().to_json(orient='records')
-    
+
+"""
+method for generating data frame
+""" 
 def get_df():
+
+    # initialize data array matrix
     data = np.array([['a','b']])
     
+    # fill it with a and b values
     for x in range(1000):
         a = np.random.randint(101, size=1)[0]
         b = a % 10
         data = np.append(data, [[a, b]], axis=0)
  
+    # return data frame
     return pd.DataFrame(data=data[1:,0:],
                   columns=data[0,0:])

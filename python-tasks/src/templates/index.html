@@ -2,6 +2,7 @@
   <!DOCTYPE html>
   <html lang="en">
 
+  <!-- Head -->
   <head>
     <meta charset="UTF-8">
     <title>FlaskApp</title>
@@ -12,61 +13,87 @@
     </script>
   </head>
 
+  <!-- Body -->
   <body>
+
+    <!-- Vue app starts here -->
     <div id="app">
+
+      <!-- Card -->
       <div class="card">
         <div class="card-body">
+
+          <!-- Title -->
           <h4 class="card-title">This is the demo for JCB</h4>
+
+          <!-- Plot is initially hidden, revealed when button is clicked -->
           <div id='linechart' class='linechart'></div>
+
+          <!-- Button to load chart, hidden when clicked -->
           <button v-if="!chartLoaded" type="button" class="btn btn-primary" @click="loadChart()">Load Chart</button>
         </div>
       </div>
+
     </div>
 
   </body>
 
   </html>
 
+  <!-- Plotly, Vue and Axios -->
   <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
   <script src="https://unpkg.com/vue@3"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
   <script>
+  
+  // Create a Vue app/component and mount it to the template
   const { createApp } = Vue
-  //const axios = import('axios');
   createApp({
     data() {
       return {
+        // state for revealing/hiding chart and button
         chartLoaded: false
       }
     },
     methods: {
+
+      //load chart from data route
       loadChart() {
+
+        // used to access the state
         var vm = this;
+
+        // make HTTP Get request
         axios.get('http://127.0.0.1:5000/data')
         .then(function (response) {
+
+          // handle success
+
+          // initialize a array and b array
           var aList = []
           var bList = []
-          // handle success
-          console.log(response);
 
+          // initialize trace
           var trace = {
             x: [],
             y: [],
             mode: 'markers'
           };
 
+          // function to add a and b values to the arrays of trace
           function appendValue(value, index, array) {
             trace.x.push(value.a);
             trace.y.push(value.b);
           }
-
+          
+          // iterate each element of the JSON data with the defined function to add values
           response.data.forEach(appendValue);
 
-          console.log(trace);
-
+          // date to create plot
           var data = [trace];
 
+          // layout for plot
           var layout = {
             title: 'Plotly plot',
             xaxis: {
@@ -80,15 +107,19 @@
             }
           };
 
+          // create plot and mount it to the template
           Plotly.newPlot('linechart', data, layout);
 
+          // chart is loaded
           vm.chartLoaded = true;
         })
         .catch(function (error) {
+
         // handle error
         console.log(error);
         })
         .then(function () {
+
         // always executed
         });
       }
