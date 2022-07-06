@@ -1,5 +1,8 @@
 <template>
+  <!-- Dog card -->
   <div>
+
+    <!-- Use Bootstrap Vue card -->
     <b-card
       :title="title"
       :img-src="imgSrc"
@@ -23,6 +26,8 @@ const axios = require("axios").default;
 export default {
   data() {
     return {
+
+      // place holder image
       imgSrc: "https://via.placeholder.com/300",
     }
   },
@@ -32,14 +37,18 @@ export default {
     text: String
   },
   mounted() {
+    // used to access data
     var vm = this;
 
+    // make HTTP Get request
     axios
       .get(
         "https://dog.ceo/api/breeds/image/random"
       )
       .then(function (response) {
-        console.log(response.data);
+
+        // handle success
+        // change image to new dog image
         vm.imgSrc = response.data.message;
       })
       .then(function () {});
