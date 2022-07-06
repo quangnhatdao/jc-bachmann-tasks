@@ -1,0 +1,104 @@
+
+  <!DOCTYPE html>
+  <html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>FlaskApp</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous">
+    </script>
+  </head>
+
+  <body>
+    <div id="app">
+
+      <div class="card" style="width:400px">
+        <img class="card-img-top" src="https:\/\/images.dog.ceo\/breeds\/hound-ibizan\/n02091244_756.jpg"
+          alt="Card image">
+        <div class="card-body">
+          <h4 class="card-title">This is the demo for JCB</h4>
+          <button type="button" class="btn btn-primary" @click="loadChart()">Load Chart</button>
+        </div>
+      </div>
+
+
+      <div id='linechart' class='linechart'></div>
+
+    </div>
+
+  </body>
+
+  </html>
+
+  <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+  <script src="https://unpkg.com/vue@3"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <script>
+  const { createApp } = Vue
+  //const axios = import('axios');
+  createApp({
+    methods: {
+      loadChart() {
+        /*
+        var graphs = {{graphJSON | safe}};
+        Plotly.plot('linechart',graphs,{});
+        */
+
+        
+
+        
+
+        axios.get('http://127.0.0.1:5000/data')
+        .then(function (response) {
+          var aList = []
+          var bList = []
+          // handle success
+          console.log(response);
+
+          var trace = {
+            x: [],
+            y: [],
+            mode: 'markers'
+          };
+
+          function appendValue(value, index, array) {
+            trace.x.push(value.a);
+            trace.y.push(value.b);
+          }
+
+          response.data.forEach(appendValue);
+
+          console.log(trace);
+
+          var data = [trace];
+
+          var layout = {
+            title: 'Plotly plot',
+            xaxis: {
+              title: 'A',
+              showgrid: false,
+              zeroline: false
+            },
+            yaxis: {
+              title: 'B',
+              showline: false
+            }
+          };
+
+          Plotly.newPlot('linechart', data, layout);
+        })
+        .catch(function (error) {
+        // handle error
+        console.log(error);
+        })
+        .then(function () {
+        // always executed
+        });
+      }
+    }
+  }).mount('#app')
+  </script>
