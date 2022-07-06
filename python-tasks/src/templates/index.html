@@ -14,19 +14,13 @@
 
   <body>
     <div id="app">
-
-      <div class="card" style="width:400px">
-        <img class="card-img-top" src="https:\/\/images.dog.ceo\/breeds\/hound-ibizan\/n02091244_756.jpg"
-          alt="Card image">
+      <div class="card">
         <div class="card-body">
           <h4 class="card-title">This is the demo for JCB</h4>
-          <button type="button" class="btn btn-primary" @click="loadChart()">Load Chart</button>
+          <div id='linechart' class='linechart'></div>
+          <button v-if="!chartLoaded" type="button" class="btn btn-primary" @click="loadChart()">Load Chart</button>
         </div>
       </div>
-
-
-      <div id='linechart' class='linechart'></div>
-
     </div>
 
   </body>
@@ -41,17 +35,14 @@
   const { createApp } = Vue
   //const axios = import('axios');
   createApp({
+    data() {
+      return {
+        chartLoaded: false
+      }
+    },
     methods: {
       loadChart() {
-        /*
-        var graphs = {{graphJSON | safe}};
-        Plotly.plot('linechart',graphs,{});
-        */
-
-        
-
-        
-
+        var vm = this;
         axios.get('http://127.0.0.1:5000/data')
         .then(function (response) {
           var aList = []
@@ -90,6 +81,8 @@
           };
 
           Plotly.newPlot('linechart', data, layout);
+
+          vm.chartLoaded = true;
         })
         .catch(function (error) {
         // handle error
